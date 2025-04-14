@@ -14,7 +14,7 @@ A responsive and mobile-friendly calculator tool to measure **ROI (Return on Inv
 
 ## 🖥️ Demo
 
-[🔗 View Live Demo]([https://your-live-demo-link.com](https://sofwanesabeg.com/roi-road-calculator/))  
+[🔗 View Live Demo](https://sofwanesabeg.com/roi-road-calculator/)  
 *(Optional – Add if you're hosting it on GitHub Pages or Netlify)*
 
 ## 🚀 Technologies Used
