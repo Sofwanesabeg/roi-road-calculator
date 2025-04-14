@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI & ROAD Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .calculator-card {
+            background-color: #111;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #b4c464;
+            font-size: 32px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #222;
+            color: #b4c464;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: #b4c464;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(180, 196, 100, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 18px;
+            background-color: #b4c464;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        button:hover {
+            background-color: #c5d575;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(180, 196, 100, 0.3);
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-item:hover {
+            background-color: #222;
+            transform: translateX(5px);
+        }
+        
+        .result-label {
+            font-weight: 500;
+            color: #b4c464;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            font-size: 22px;
+            transition: color 0.5s ease;
+        }
+        
+        .positive {
+            color: #4caf50;
+        }
+        
+        .negative {
+            color: #f44336;
+        }
+        
+        .insight {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #1a1a1a;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        .chart-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            height: 300px;
+        }
+        
+        .data-entry {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .data-entry h3 {
+            color: #b4c464;
+            margin-bottom: 15px;
+        }
+        
+        .data-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .data-row input {
+            flex: 1;
+        }
+        
+        .data-row button {
+            width: auto;
+            padding: 10px;
+        }
+        
+        .data-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        
+        .data-table th {
+            color: #b4c464;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-card {
+                padding: 30px;
+                max-width: 100%;
+            }
+            
+            .calculator-card h1 {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+            
+            .calculator-card input, .calculator-card select, .calculator-card button {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calculator-card {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .calculator-card h1 {
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+            
+            .calculator-card .input-group {
+                margin-bottom: 15px;
+            }
+            
+            .calculator-card label {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+            
+            .calculator-card input, .calculator-card select {
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            .calculator-card button {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            .calculator-card .result-item {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .calculator-card .result-value {
+                font-size: 18px;
+            }
+            
+            .calculator-card .insight {
+                padding: 15px;
+                font-size: 14px;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-card">
+        <h1>ROI & ROAD Calculator</h1>
+        
+        <div class="input-group">
+            <label for="revenue">Revenue from Ads</label>
+            <input type="number" id="revenue" placeholder="Enter revenue amount">
+        </div>
+        
+        <div class="input-group">
+            <label for="adSpend">Ad Spend</label>
+            <input type="number" id="adSpend" placeholder="Enter ad spend amount">
+        </div>
+        
+        <div class="input-group">
+            <label for="otherCosts">Other Costs (optional)</label>
+            <input type="number" id="otherCosts" placeholder="Enter other costs">
+        </div>
+        
+        <div class="input-group">
+            <label for="currency">Currency</label>
+            <select id="currency">
+                <option value="AED">AED</option>
+                <option value="USD">USD</option>
+            </select>
+        </div>
+        
+        <button id="calculateBtn">Calculate</button>
+        
+        <div class="results">
+            <div class="result-item">
+                <span class="result-label">ROI (Return on Investment)</span>
+                <span class="result-value" id="roiResult">-</span>
+            </div>
+            
+            <div class="result-item">
+                <span class="result-label">ROAD (Return on Ad Dollars)</span>
+                <span class="result-value" id="roadResult">-</span>
+            </div>
+            
+            <div class="insight" id="insightText"></div>
+        </div>
+    </div>
+
+    <style>
+        .calculator-card {
+            background-color: #111;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .calculator-card h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #b4c464;
+            font-size: 32px;
+        }
+        
+        .calculator-card .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .calculator-card label {
+            display: block;
+            margin-bottom: 10px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+        
+        .calculator-card input, .calculator-card select {
+            width: 100%;
+            padding: 15px 18px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #222;
+            color: #b4c464;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .calculator-card input:focus, .calculator-card select:focus {
+            border-color: #b4c464;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(180, 196, 100, 0.2);
+        }
+        
+        .calculator-card button {
+            width: 100%;
+            padding: 18px;
+            background-color: #b4c464;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .calculator-card button:hover {
+            background-color: #c5d575;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(180, 196, 100, 0.3);
+        }
+        
+        .calculator-card .results {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+        
+        .calculator-card .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .calculator-card .result-item:hover {
+            background-color: #222;
+            transform: translateX(5px);
+        }
+        
+        .calculator-card .result-label {
+            font-weight: 500;
+            color: #b4c464;
+        }
+        
+        .calculator-card .result-value {
+            font-weight: 600;
+            font-size: 22px;
+            transition: color 0.5s ease;
+        }
+        
+        .calculator-card .positive {
+            color: #4caf50;
+        }
+        
+        .calculator-card .negative {
+            color: #f44336;
+        }
+        
+        .calculator-card .insight {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #1a1a1a;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-card {
+                padding: 30px;
+                max-width: 100%;
+            }
+            
+            .calculator-card h1 {
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+            
+            .calculator-card input, .calculator-card select, .calculator-card button {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .calculator-card {
+                padding: 25px;
+            }
+            
+            .calculator-card h1 {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            .calculator-card .result-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .calculator-card .result-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculateBtn = document.getElementById('calculateBtn');
+            
+            // Calculate ROI and ROAD
+            function calculateMetrics(revenue, adSpend, otherCosts) {
+                const totalInvestment = adSpend + otherCosts;
+                const netProfit = revenue - totalInvestment;
+                
+                let roi = 0;
+                if (totalInvestment > 0) {
+                    roi = (netProfit / totalInvestment) * 100;
+                }
+                
+                let road = 0;
+                if (adSpend > 0) {
+                    road = (revenue / adSpend) * 100;
+                }
+                
+                return { roi, road };
+            }
+            
+            // Generate insight text based on metrics
+            function generateInsight(roi, road) {
+                let insightText = '';
+                
+                if (roi > 0 && road > 100) {
+                    insightText = `✅ Great job! Your ROAD is ${road.toFixed(0)}%, meaning you made ${(road/100).toFixed(1)}x your ad spend.`;
+                } else if (roi < 0 || road < 100) {
+                    insightText = `⚠️ Warning: ${roi < 0 ? 'ROI is negative' : 'ROAD is below 100%'}. You're spending more than you're earning.`;
+                } else {
+                    insightText = `ℹ️ Your campaign is breaking even. Consider optimizing to improve performance.`;
+                }
+                
+                return insightText;
+            }
+            
+            // Calculate button event
+            calculateBtn.addEventListener('click', function() {
+                // Get input values
+                const revenue = parseFloat(document.getElementById('revenue').value) || 0;
+                const adSpend = parseFloat(document.getElementById('adSpend').value) || 0;
+                const otherCosts = parseFloat(document.getElementById('otherCosts').value) || 0;
+                const currency = document.getElementById('currency').value;
+                
+                // Calculate metrics
+                const { roi, road } = calculateMetrics(revenue, adSpend, otherCosts);
+                
+                // Display results with color coding
+                const roiResult = document.getElementById('roiResult');
+                const roadResult = document.getElementById('roadResult');
+                
+                roiResult.textContent = `${roi.toFixed(2)}%`;
+                roadResult.textContent = `${road.toFixed(2)}%`;
+                
+                // Apply color classes with transition
+                roiResult.className = 'result-value';
+                roadResult.className = 'result-value';
+                
+                setTimeout(() => {
+                    roiResult.classList.add(roi > 100 ? 'positive' : 'negative');
+                    roadResult.classList.add(road > 100 ? 'positive' : 'negative');
+                }, 50);
+                
+                // Generate and display insight
+                const insightText = document.getElementById('insightText');
+                insightText.textContent = generateInsight(roi, road);
+                
+                // Add animation to results
+                const resultItems = document.querySelectorAll('.result-item, .insight');
+                resultItems.forEach(item => {
+                    item.style.opacity = '0';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
