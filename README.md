@@ -9,7 +9,6 @@ A responsive and mobile-friendly calculator tool to measure **ROI (Return on Inv
 - Dynamic result styling (green for positive, red for low/negative)
 - Currency support for AED 🇦🇪 and USD 🇺🇸
 - Net Profit and ROAS included
-- Interactive performance chart for up to 5 campaigns
 - Clean dark-themed UI with responsive design
 
 ## 🖥️ Demo
